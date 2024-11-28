@@ -19,7 +19,7 @@ public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
     private final Service service = new Service();
-    private final static Logger log = LoggerFactory.getLogger(Film.class);
+    private final Logger log = LoggerFactory.getLogger(Film.class);
     private final LogMessage lMsg = new LogMessage();
 
     @GetMapping

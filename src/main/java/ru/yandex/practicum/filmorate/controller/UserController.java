@@ -19,7 +19,7 @@ import java.util.Map;
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
     private final Service service = new Service();
-    private final static Logger log = LoggerFactory.getLogger(User.class);
+    private final Logger log = LoggerFactory.getLogger(User.class);
     private final LogMessage lMsg = new LogMessage();
 
     @GetMapping
