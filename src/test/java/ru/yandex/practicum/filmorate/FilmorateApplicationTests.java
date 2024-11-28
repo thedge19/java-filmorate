@@ -43,6 +43,7 @@ class FilmorateApplicationTests {
             filmController.create(new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3));
             filmController.create(new Film(5L, "Fake L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-26", 3));
         } catch (ValidationException e) {
+            e.printStackTrace();
         }
         assertEquals(filmController.findAll().size(), 4);
     }
@@ -53,6 +54,7 @@ class FilmorateApplicationTests {
             filmController.create(new Film(4L, "newFilm4", "newFilmDescription4", "2020-02-12", 1));
             filmController.create(new Film(5L, "newFilm5", "newFilmDescription5", "2020-02-14", -1));
         } catch (ValidationException e) {
+            e.printStackTrace();
         }
         assertEquals(filmController.findAll().size(), 4);
     }
@@ -69,6 +71,7 @@ class FilmorateApplicationTests {
             userController.create(new User(4L, "user4@user.ru", "login4", "user4", "1960-03-08"));
             userController.create(new User(5L, "user4.user.ru", "login4", "user4", "1950-03-08"));
         } catch (ValidationException e) {
+            e.printStackTrace();
         }
         assertEquals(userController.findAll().size(), 4);
     }
@@ -79,6 +82,7 @@ class FilmorateApplicationTests {
             userController.create(new User(4L, "user4@user.ru", "login4", "user4", "2024-11-28"));
             userController.create(new User(5L, "user5.user.ru", "login5", "user5", "2024-11-29"));
         } catch (ValidationException e) {
+            e.printStackTrace();
         }
         assertEquals(userController.findAll().size(), 4);
     }
