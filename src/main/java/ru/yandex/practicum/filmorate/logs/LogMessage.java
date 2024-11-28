@@ -17,4 +17,16 @@ public class LogMessage {
     public String getUndiscoveredId(String element) {
         return element + " с id = {} не найден";
     }
+
+    public String getInvalidEmail() {
+        return "Электронная почта не может быть пустой и должна содержать символ @, как, например, эта - {}";
+    }
+
+    public String getInvalidLogin() {
+        return "Логин не может быть пустым или содержать пробелы, как, например, этот - {}";
+    }
+
+    public String getInvalidBirthday() {
+        return "Дата рождения не может быть в будущем. А эта - {}";
+    }
 }

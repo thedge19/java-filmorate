@@ -31,24 +31,25 @@ public class UserController {
     public User create(@RequestBody User user) {
         // проверяем выполнение необходимых условий
         if (user.getEmail() == null || user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            log.error("Invalid email address: {}", user.getEmail());
+            log.error(lMsg.getInvalidEmail(), user.getEmail());
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
         if (user.getLogin() == null || user.getLogin().contains(" ")) {
-            log.error("Invalid login: {}", user.getLogin());
+            log.error(lMsg.getInvalidLogin(), user.getLogin());
             throw new ValidationException("Логин не может быть пустым или содержать пробелы");
         }
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
         if (service.checkDate(user.getBirthday(), LocalDate.now())) {
-            log.error("Invalid birthday: {}", user.getBirthday());
+            log.error(lMsg.getInvalidBirthday(), user.getBirthday());
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         // формируем дополнительные данные
         user.setId(service.getNextId(users));
         // сохраняем новую публикацию в памяти приложения
         users.put(user.getId(), user);
+        log.info("Пользователь с id {} добавлен", user.getId());
         return user;
     }
 
@@ -59,12 +60,14 @@ public class UserController {
             User oldUser = users.get(newUser.getId());
             if (newUser.getEmail() != null) {
                 if (!newUser.getEmail().contains("@")) {
-                    throw new ValidationException("Электронная почта должна содержать символ");
+                    log.error(lMsg.getInvalidEmail(), newUser.getEmail());
+                    throw new ValidationException("Электронная почта должна содержать символ @");
                 }
                 oldUser.setEmail(newUser.getEmail());
             }
             if (newUser.getLogin() != null) {
                 if (newUser.getLogin().contains(" ")) {
+                    log.error(lMsg.getInvalidLogin(), newUser.getLogin());
                     throw new ValidationException("Логин не может содержать пробелы");
                 }
                 oldUser.setLogin(newUser.getLogin());
@@ -74,12 +77,14 @@ public class UserController {
             }
             if (newUser.getBirthday() != null) {
                 if (service.checkDate(newUser.getBirthday(), LocalDate.now())) {
+                    log.error(lMsg.getInvalidBirthday(), newUser.getBirthday());
                     throw new ValidationException("Дата рождения не может быть в будущем");
                 }
                 oldUser.setBirthday(newUser.getBirthday());
             }
             // если публикация найдена и все условия соблюдены, обновляем её содержимое
             users.put(oldUser.getId(), oldUser);
+            log.info("Пользователь с id {} обновлён", oldUser.getId());
             return oldUser;
         }
         log.error(lMsg.getUndiscoveredId("Пользователь"), newUser.getId());
