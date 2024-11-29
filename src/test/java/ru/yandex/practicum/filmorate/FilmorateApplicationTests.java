@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,8 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+@Slf4j
 @SpringBootTest
 class FilmorateApplicationTests {
 
@@ -40,7 +43,8 @@ class FilmorateApplicationTests {
     @Test
     void shouldNotAddFilmBefore() {
         try {
-            filmController.create(new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3));
+            filmController.create(
+                    new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3));
             filmController.create(new Film(5L, "Fake L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-26", 3));
         } catch (ValidationException e) {
             e.printStackTrace();
@@ -78,12 +82,8 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldNotAddUnbornUser() {
-        try {
-            userController.create(new User(4L, "user4@user.ru", "login4", "user4", "2024-11-28"));
-            userController.create(new User(5L, "user5.user.ru", "login5", "user5", "2024-11-29"));
-        } catch (ValidationException e) {
-            e.printStackTrace();
-        }
+        userController.create(new User(4L, "user4@user.ru", "login4", "user4", "2024-11-30"));
+        userController.create(new User(5L, "user5@user.ru", "login5", "user5", "2024-11-31"));
         assertEquals(userController.findAll().size(), 4);
     }
 }
