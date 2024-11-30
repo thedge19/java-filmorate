@@ -1,16 +1,21 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,13 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class FilmorateApplicationTests {
 
+    static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    static Validator validator = factory.getValidator();
+    String message = "";
     FilmController filmController;
     UserController userController;
+    ArrayList<Film> filmsToAdd;
+    ArrayList<User> usersToAdd;
 
     @BeforeEach
     void setUp() {
         filmController = new FilmController();
         userController = new UserController();
+        filmsToAdd = new ArrayList<>();
+        usersToAdd = new ArrayList<>();
         filmController.create(new Film(1L, "newFilm1", "newFilmDescription1", "2010-08-10", 120));
         filmController.create(new Film(2L, "newFilm2", "newFilmDescription2", "1980-10-15", 160));
         filmController.create(new Film(3L, "newFilm3", "newFilmDescription3", "2020-02-12", 100));
@@ -42,23 +54,30 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldNotAddFilmBefore() {
-        try {
-            filmController.create(
-                    new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3));
-            filmController.create(new Film(5L, "Fake L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-26", 3));
-        } catch (ValidationException e) {
-            e.printStackTrace();
+        Film film4 = new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3);
+        Film film5 = new Film(5L, "Fake L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-27", 3);
+        filmsToAdd.add(film4);
+        filmsToAdd.add(film5);
+
+        for (Film film : filmsToAdd) {
+            if (validateObjects(film)) {
+                filmController.create(film);
+            }
         }
         assertEquals(filmController.findAll().size(), 4);
     }
 
     @Test
     void shouldNotAddFilmWithNegativeDuration() {
-        try {
-            filmController.create(new Film(4L, "newFilm4", "newFilmDescription4", "2020-02-12", 1));
-            filmController.create(new Film(5L, "newFilm5", "newFilmDescription5", "2020-02-14", -1));
-        } catch (ValidationException e) {
-            e.printStackTrace();
+         Film film4 = new Film(4L, "newFilm4", "newFilmDescription4", "2020-02-12", 1);
+         Film film5 = new Film(5L, "newFilm5", "newFilmDescription5", "2020-02-14", -1);
+        filmsToAdd.add(film4);
+        filmsToAdd.add(film5);
+
+        for (Film film : filmsToAdd) {
+            if (validateObjects(film)) {
+                filmController.create(film);
+            }
         }
         assertEquals(filmController.findAll().size(), 4);
     }
@@ -71,19 +90,36 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldNotAddUserWithEmailWithoutAt() {
-        try {
-            userController.create(new User(4L, "user4@user.ru", "login4", "user4", "1960-03-08"));
-            userController.create(new User(5L, "user4.user.ru", "login4", "user4", "1950-03-08"));
-        } catch (ValidationException e) {
-            e.printStackTrace();
+        User user4 = new User(4L, "user4@user.ru", "login4", "user4", "1960-03-08");
+        User user5 = new User(5L, "user4.user.ru", "login4", "user4", "1950-03-08");
+        usersToAdd.add(user4);
+        usersToAdd.add(user5);
+
+        for (User user : usersToAdd) {
+            if (validateObjects(user)) {
+                userController.create(user);
+            }
         }
         assertEquals(userController.findAll().size(), 4);
     }
 
     @Test
     void shouldNotAddUnbornUser() {
-        userController.create(new User(4L, "user4@user.ru", "login4", "user4", "2024-11-30"));
-        userController.create(new User(5L, "user5@user.ru", "login5", "user5", "2024-11-31"));
+        User user4 = new User(4L, "user4@user.ru", "login4", "user4", "2024-11-30");
+        User user5 = new User(5L, "user5@user.ru", "login5", "user5", "2024-12-12");
+        usersToAdd.add(user4);
+        usersToAdd.add(user5);
+
+        for (User user : usersToAdd) {
+            if (validateObjects(user)) {
+                userController.create(user);
+            }
+        }
         assertEquals(userController.findAll().size(), 4);
+    }
+
+    static boolean validateObjects(Object o) {
+        Set<ConstraintViolation<Object>> violations = validator.validate(o);
+        return violations.isEmpty();
     }
 }
