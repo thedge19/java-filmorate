@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate;
 
-import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class FilmorateApplicationTests {
 
-    static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     FilmController filmController;
     UserController userController;
     ArrayList<Film> filmsToAdd;
