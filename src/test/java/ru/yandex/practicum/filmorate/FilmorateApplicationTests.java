@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FilmorateApplicationTests {
 
     static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    static Validator validator = factory.getValidator();
     FilmController filmController;
     UserController userController;
     ArrayList<Film> filmsToAdd;
