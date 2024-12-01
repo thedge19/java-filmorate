@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.yandex.practicum.filmorate.validator.interfaces.AdvanceInfo;
+import ru.yandex.practicum.filmorate.validator.interfaces.BasicInfo;
 import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationConstraints;
 
 /**
@@ -16,13 +18,13 @@ import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationCons
 @AllArgsConstructor
 public class Film {
     private Long id;
-    @NotNull(message = "Название не может быть пустым")
-    @NotEmpty(message = "Название не может быть пустым")
+    @NotNull(groups = BasicInfo.class)
+    @NotEmpty(groups = BasicInfo.class)
     private String name;
-    @Length(max = 200, message = "Максимальная длина описания — 200 символов.")
+    @Length(max = 200, groups = {BasicInfo.class, AdvanceInfo.class})
     private String description;
-    @FilmDateValidationConstraints
+    @FilmDateValidationConstraints(groups = {BasicInfo.class, AdvanceInfo.class})
     private String releaseDate;
-    @Positive(message = "Продолжительность фильма должна быть положительным числом")
+    @Positive(groups = {BasicInfo.class, AdvanceInfo.class})
     private Integer duration;
 }

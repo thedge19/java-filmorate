@@ -3,20 +3,24 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.validator.interfaces.AdvanceInfo;
+import ru.yandex.practicum.filmorate.validator.interfaces.BasicInfo;
 import ru.yandex.practicum.filmorate.validator.interfaces.BirthdayValidationConstraints;
 import ru.yandex.practicum.filmorate.validator.interfaces.LoginValidationConstraints;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
     private Long id;
-    @NotNull(message = "Электронная почта не может быть пустой")
-    @Email(message = "Электронная почта должна содержать символ @")
+    @NotNull(groups = BasicInfo.class)
+    @Email(groups = {BasicInfo.class, AdvanceInfo.class})
     private String email;
-    @NotNull(message = "Логин не может быть пустым")
-    @LoginValidationConstraints(message = "Логин не может содержать пробелы")
+    @NotNull(groups = BasicInfo.class)
+    @LoginValidationConstraints(groups = {BasicInfo.class, AdvanceInfo.class})
     private String login;
     private String name;
-    @BirthdayValidationConstraints
+    @BirthdayValidationConstraints(groups = {BasicInfo.class, AdvanceInfo.class})
     private String birthday;
 }
