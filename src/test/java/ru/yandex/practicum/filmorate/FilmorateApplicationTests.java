@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
 import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
