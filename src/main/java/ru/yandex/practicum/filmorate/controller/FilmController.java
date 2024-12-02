@@ -5,8 +5,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.interfaces.AdvanceInfo;
-import ru.yandex.practicum.filmorate.validator.interfaces.BasicInfo;
+import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
+import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class FilmController {
     @PostMapping
     public Film create(
             @RequestBody
-            @Validated(BasicInfo.class)
+            @Validated(Created.class)
             Film film) {
         // формируем дополнительные данные
         film.setId(getNextId(films));
@@ -40,7 +40,7 @@ public class FilmController {
     @PutMapping
     public Film update(
             @RequestBody
-            @Validated(AdvanceInfo.class)
+            @Validated(Updated.class)
             Film newFilm) {
         // проверяем необходимые условия
         if (films.containsKey(newFilm.getId())) {

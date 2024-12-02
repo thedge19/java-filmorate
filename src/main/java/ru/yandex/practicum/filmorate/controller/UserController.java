@@ -5,8 +5,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.interfaces.AdvanceInfo;
-import ru.yandex.practicum.filmorate.validator.interfaces.BasicInfo;
+import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
+import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,8 +26,7 @@ public class UserController {
     @PostMapping
     public User create(
             @RequestBody
-            @Validated(BasicInfo.class)
-//            @ModelAttribute("user")
+            @Validated(Created.class)
             User user) {
         log.info(user.toString());
         // проверяем выполнение необходимых условий
@@ -45,7 +44,7 @@ public class UserController {
     @PutMapping
     public User update(
             @RequestBody
-            @Validated(AdvanceInfo.class)
+            @Validated(Updated.class)
             User newUser) {
 //      проверяем необходимые условия
         if (users.get(newUser.getId()) != null) {
