@@ -1,31 +1,31 @@
 package ru.yandex.practicum.filmorate;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+//import ru.yandex.practicum.filmorate.controller.FilmController;
+//import ru.yandex.practicum.filmorate.controller.UserController;
+//import ru.yandex.practicum.filmorate.model.Film;
+//import ru.yandex.practicum.filmorate.model.User;
+//
+//import java.util.ArrayList;
+//import java.util.Collection;
+//
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @Slf4j
 @SpringBootTest
 class FilmorateApplicationTests {
 
-    FilmController filmController;
-    UserController userController;
-    ArrayList<Film> filmsToAdd;
-    ArrayList<User> usersToAdd;
-
-    @BeforeEach
-    void setUp() {
+//    FilmController filmController;
+//    UserController userController;
+//    ArrayList<Film> filmsToAdd;
+//    ArrayList<User> usersToAdd;
+//
+//    @BeforeEach
+//    void setUp() {
 //        filmController = new FilmController();
 //        userController = new UserController();
 //        filmsToAdd = new ArrayList<>();
@@ -36,8 +36,8 @@ class FilmorateApplicationTests {
 //        userController.create(new User(1L, "user1@user.ru", "login1", "user1", "2000-05-01"));
 //        userController.create(new User(2L, "user2@user.ru", "login2", "user2", "1980-04-02"));
 //        userController.create(new User(3L, "user3@user.ru", "login3", "user3", "1970-03-08"));
-    }
-
+//    }
+//
 //    @Test
 //    void shouldGetFilms() {
 //        Collection<Film> films = filmController.findAll();

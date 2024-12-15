@@ -5,11 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.classes.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
@@ -21,18 +17,16 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class FilmController {
 
-    private final FilmService service;
-    private final UserService userService;
     private final FilmService filmService;
 
     @GetMapping
     public Collection<Film> findAll() {
-        return service.findAll();
+        return filmService.findAll();
     }
 
     @GetMapping("/{id}")
     public Film findFilmById(@PathVariable long id) {
-        return service.findById(id);
+        return filmService.findById(id);
     }
 
     @PostMapping
@@ -40,7 +34,7 @@ public class FilmController {
             @RequestBody
             @Validated(Created.class)
             Film film) {
-        return service.create(film);
+        return filmService.create(film);
     }
 
     @PutMapping
@@ -49,7 +43,7 @@ public class FilmController {
             @Validated(Updated.class)
             Film newFilm) {
         // проверяем необходимые условия
-        return service.update(newFilm);
+        return filmService.update(newFilm);
     }
 
     @PutMapping("/{id}/like/{userId}")
