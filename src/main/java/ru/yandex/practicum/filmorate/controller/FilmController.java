@@ -1,27 +1,38 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.classes.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
+import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
 
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService service;
+    private final UserService userService;
+    private final FilmService filmService;
 
     @GetMapping
     public Collection<Film> findAll() {
-        return films.values();
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Film findFilmById(@PathVariable long id) {
+        return service.findById(id);
     }
 
     @PostMapping
@@ -29,12 +40,7 @@ public class FilmController {
             @RequestBody
             @Validated(Created.class)
             Film film) {
-        // формируем дополнительные данные
-        film.setId(getNextId(films));
-        // сохраняем новую публикацию в памяти приложения
-        films.put(film.getId(), film);
-        log.info("Фильм {} добавлен", film.getName());
-        return film;
+        return service.create(film);
     }
 
     @PutMapping
@@ -43,35 +49,26 @@ public class FilmController {
             @Validated(Updated.class)
             Film newFilm) {
         // проверяем необходимые условия
-        if (films.containsKey(newFilm.getId())) {
-            Film oldFilm = films.get(newFilm.getId());
-            if (newFilm.getName() != null) {
-                oldFilm.setName(newFilm.getName());
-            }
-            if (newFilm.getDescription() != null) {
-                oldFilm.setDescription(newFilm.getDescription());
-            }
-            if (newFilm.getReleaseDate() != null) {
-                oldFilm.setReleaseDate(newFilm.getReleaseDate());
-            }
-            if (newFilm.getDuration() != null) {
-                oldFilm.setDuration(newFilm.getDuration());
-            }
-            // если публикация найдена и все условия соблюдены, обновляем её содержимое
-            films.put(oldFilm.getId(), oldFilm);
-            log.info("Фильм {} обновлён", oldFilm.getName());
-            return oldFilm;
-        }
-        log.error("Фильм с id = {} не найден", newFilm.getId());
-        throw new ValidationException("Фильм с id = " + newFilm.getId() + " не найден");
+        return service.update(newFilm);
     }
 
-    private long getNextId(Map<Long, ?> elements) {
-        long currentMaxId = elements.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/like/{userId}")
+    public void like(
+            @PathVariable long id,
+            @PathVariable long userId) {
+        filmService.like(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void unlike(
+            @PathVariable long id,
+            @PathVariable long userId) {
+        filmService.unlike(id, userId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    public Collection<Film> popularFilms(
+            @PathVariable Integer count) {
+         return filmService.popularFilms(count);
     }
 }

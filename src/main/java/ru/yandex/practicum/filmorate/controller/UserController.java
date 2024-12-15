@@ -1,26 +1,33 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
+import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+
+    private final UserService service;
 
     @GetMapping
     public Collection<User> findAll() {
-        return users.values();
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable long id) {
+        return service.findById(id);
     }
 
     @PostMapping
@@ -28,17 +35,7 @@ public class UserController {
             @RequestBody
             @Validated(Created.class)
             User user) {
-        log.info(user.toString());
-        // проверяем выполнение необходимых условий
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        // формируем дополнительные данные
-        user.setId(getNextId(users));
-        // сохраняем новую публикацию в памяти приложения
-        users.put(user.getId(), user);
-        log.info("Пользователь с id {} добавлен", user.getId());
-        return user;
+        return service.create(user);
     }
 
     @PutMapping
@@ -46,36 +43,35 @@ public class UserController {
             @RequestBody
             @Validated(Updated.class)
             User newUser) {
-//      проверяем необходимые условия
-        if (users.get(newUser.getId()) != null) {
-            User oldUser = users.get(newUser.getId());
-            if (newUser.getEmail() != null) {
-                oldUser.setEmail(newUser.getEmail());
-            }
-            if (newUser.getLogin() != null) {
-                oldUser.setLogin(newUser.getLogin());
-            }
-            if (newUser.getName() != null) {
-                oldUser.setName(newUser.getName());
-            }
-            if (newUser.getBirthday() != null) {
-                oldUser.setBirthday(newUser.getBirthday());
-            }
-            // если публикация найдена и все условия соблюдены, обновляем её содержимое
-            users.put(oldUser.getId(), oldUser);
-            log.info("Пользователь с id {} обновлён", oldUser.getId());
-            return oldUser;
-        }
-        log.error("Пользователь с id = {} не найден", newUser.getId());
-        throw new ValidationException("Пользователь с id = " + newUser.getId() + " не найден");
+        return service.update(newUser);
     }
 
-    private long getNextId(Map<Long, ?> elements) {
-        long currentMaxId = elements.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable long id) {
+        service.deleteById(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId)
+    {
+        service.addFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Set<User> getFriends(@PathVariable long id)
+    {
+        return service.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Set<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId)
+    {
+        return service.getCommonFriends(id, otherId);
+    }
+
+    @DeleteMapping( "/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable long id, @PathVariable long friendId)
+    {
+        service.removeFriend(id, friendId);
     }
 }
