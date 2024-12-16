@@ -8,6 +8,10 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.classes.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,16 +30,16 @@ class FilmorateApplicationTests {
 
     @BeforeEach
     void setUp() {
-        filmController = new FilmController();
-        userController = new UserController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage()));
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
         filmsToAdd = new ArrayList<>();
         usersToAdd = new ArrayList<>();
-        filmController.create(new Film(1L, "newFilm1", "newFilmDescription1", "2010-08-10", 120));
-        filmController.create(new Film(2L, "newFilm2", "newFilmDescription2", "1980-10-15", 160));
-        filmController.create(new Film(3L, "newFilm3", "newFilmDescription3", "2020-02-12", 100));
-        userController.create(new User(1L, "user1@user.ru", "login1", "user1", "2000-05-01"));
-        userController.create(new User(2L, "user2@user.ru", "login2", "user2", "1980-04-02"));
-        userController.create(new User(3L, "user3@user.ru", "login3", "user3", "1970-03-08"));
+        filmController.create(new Film());
+        filmController.create(new Film());
+        filmController.create(new Film());
+        userController.create(new User());
+        userController.create(new User());
+        userController.create(new User());
     }
 
     @Test
@@ -46,7 +50,7 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldAddFilm() {
-        Film film4 = new Film(4L, "L’Arrivée d’un train en gare de la Ciotat", "newFilmDescription4", "1895-12-28", 3);
+        Film film4 = new Film();
         filmController.create(film4);
         assertEquals(filmController.findAll().size(), 4);
     }
@@ -59,7 +63,7 @@ class FilmorateApplicationTests {
 
     @Test
     void shouldAddUser() {
-        User user4 = new User(4L, "user4@user.ru", "login4", "user4", "1960-03-08");
+        User user4 = new User();
         userController.create(user4);
         assertEquals(userController.findAll().size(), 4);
     }
