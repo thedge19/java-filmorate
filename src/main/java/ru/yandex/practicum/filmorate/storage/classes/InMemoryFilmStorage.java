@@ -6,10 +6,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -77,18 +75,15 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> popularFilms(Integer count) {
+        List<Film> filmList = new ArrayList<>(films.values());
+        filmList.sort(Comparator.comparingInt(f -> - f.getLikedUsersIds().size()));
 
-        if (count == null) {
-            count = 0;
+        if (films.values().size() > count) {
+            filmList = filmList.stream().limit(count).collect(Collectors.toList());
         }
 
-        Collection<Film> popularFilms = new ArrayList<>();
-        for (long i = count; i < count + 10; i++) {
-            popularFilms.add(films.get(i));
-        }
-        return popularFilms;
+        return filmList;
     }
-
 
     private long getNextId(Map<Long, ?> elements) {
         long currentMaxId = elements.keySet()
@@ -99,3 +94,5 @@ public class InMemoryFilmStorage implements FilmStorage {
         return ++currentMaxId;
     }
 }
+
+

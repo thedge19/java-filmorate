@@ -49,27 +49,23 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User update(User newUser) {
         // проверяем необходимые условия
-        if (users.get(newUser.getId()) != null) {
-            User oldUser = users.get(newUser.getId());
-            if (newUser.getEmail() != null) {
-                oldUser.setEmail(newUser.getEmail());
-            }
-            if (newUser.getLogin() != null) {
-                oldUser.setLogin(newUser.getLogin());
-            }
-            if (newUser.getName() != null) {
-                oldUser.setName(newUser.getName());
-            }
-            if (newUser.getBirthday() != null) {
-                oldUser.setBirthday(newUser.getBirthday());
-            }
-            // если публикация найдена и все условия соблюдены, обновляем её содержимое
-            users.put(oldUser.getId(), oldUser);
-            log.info("Пользователь с id {} обновлён", oldUser.getId());
-            return oldUser;
+        User oldUser = users.get(newUser.getId());
+        if (newUser.getEmail() != null) {
+            oldUser.setEmail(newUser.getEmail());
         }
-        log.error("Пользователь с id = {} не найден update", newUser.getId());
-        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
+        if (newUser.getLogin() != null) {
+            oldUser.setLogin(newUser.getLogin());
+        }
+        if (newUser.getName() != null) {
+            oldUser.setName(newUser.getName());
+        }
+        if (newUser.getBirthday() != null) {
+            oldUser.setBirthday(newUser.getBirthday());
+        }
+        // если публикация найдена и все условия соблюдены, обновляем её содержимое
+        users.put(oldUser.getId(), oldUser);
+        log.info("Пользователь с id {} обновлён", oldUser.getId());
+        return oldUser;
     }
 
     @Override
@@ -109,9 +105,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void removeFriend(long userId, long friendId) {
-        log.info("Пользователи с id={} и {} больше не друзья", userId, friendId);
-        users.get(userId).getFriendsIds().remove(friendId);
-        users.get(friendId).getFriendsIds().remove(userId);
+        if (users.get(userId).getFriendsIds().contains(friendId)) {
+            log.info("Пользователи с id={} и {} больше не друзья", userId, friendId);
+            users.get(userId).getFriendsIds().remove(friendId);
+            users.get(friendId).getFriendsIds().remove(userId);
+        }
     }
 
     private long getNextId(Map<Long, ?> elements) {

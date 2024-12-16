@@ -60,9 +60,9 @@ public class FilmController {
         filmService.unlike(id, userId);
     }
 
-    @GetMapping("/popular?count={count}")
+    @GetMapping("/popular")
     public Collection<Film> popularFilms(
-            @PathVariable Integer count) {
+            @RequestParam(required = false, defaultValue = "10") Integer count) {
          return filmService.popularFilms(count);
     }
 }

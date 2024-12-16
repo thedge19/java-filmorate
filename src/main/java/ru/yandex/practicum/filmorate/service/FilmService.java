@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.OtherException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
@@ -37,7 +36,7 @@ public class FilmService {
     }
 
     public void like(long id, long userId) {
-        if (filmStorage.findById(userId) == null || userStorage.findById(userId) == null) {
+        if (filmStorage.findById(id) == null || userStorage.findById(userId) == null) {
             log.error("Пользователь с id={} или фильм с id={} не найден like", userId, id);
             throw new NotFoundException("Фильм не найден");
         }
@@ -45,7 +44,7 @@ public class FilmService {
     }
 
     public void unlike(long id, long userId) {
-        if (filmStorage.findById(userId) == null || userStorage.findById(userId) == null) {
+        if (filmStorage.findById(id) == null || userStorage.findById(userId) == null) {
             log.error("Пользователь с id={} или фильм с id={} не найден unlike", userId, id);
             throw new NotFoundException("Фильм не найден");
         }
@@ -53,10 +52,6 @@ public class FilmService {
     }
 
     public Collection<Film> popularFilms(Integer count) {
-        if(filmStorage.findAll().size() <= count) {
-            log.error("Некорректный отсчёт {}", count);
-            throw new OtherException("Некорректный отсчёт");
-        }
         return filmStorage.popularFilms(count);
     }
 }

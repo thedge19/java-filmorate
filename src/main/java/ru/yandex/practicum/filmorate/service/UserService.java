@@ -19,7 +19,6 @@ public class UserService {
     private final UserStorage userStorage;
 
     public Collection<User> findAll() {
-        log.info("Id первого юзера = " + userStorage.findById(1).getId());
         return userStorage.findAll();
     }
 
@@ -32,7 +31,11 @@ public class UserService {
     }
 
     public User update(User newUser) {
-        return userStorage.update(newUser);
+        if (findById(newUser.getId()) != null) {
+            return userStorage.update(newUser);
+        }
+        log.error("Пользователь с id = {} не найден update", newUser.getId());
+        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
     }
 
     public void addFriend(long userId, long friendId) {
@@ -66,7 +69,7 @@ public class UserService {
     }
 
     public void removeFriend(long userId, long friendId) {
-        if (userStorage.findById(userId) == null || !userStorage.findById(userId).getFriendsIds().contains(friendId)) {
+        if (userStorage.findById(userId) == null || userStorage.findById(friendId) == null) {
             log.error("Ошибка удаления пользователя с id={} иp друзей пользователя с id={}", friendId, userId);
             throw new NotFoundException("Пользователь не найден");
         }
