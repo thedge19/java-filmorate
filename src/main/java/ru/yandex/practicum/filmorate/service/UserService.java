@@ -95,7 +95,7 @@ public class UserService {
         User user = verifyingTheUsersExistence(userId);
         User friend = verifyingTheUsersExistence(friendId);
 
-        if(user.getFriendsIds().contains(friend.getId())) {
+        if (user.getFriendsIds().contains(friend.getId())) {
             userStorage.removeFriend(userId, friendId);
         }
 
