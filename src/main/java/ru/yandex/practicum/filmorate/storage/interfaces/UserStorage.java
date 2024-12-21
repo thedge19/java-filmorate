@@ -9,7 +9,7 @@ public interface UserStorage {
 
     Collection<User> findAll();
 
-    public Set<String> findEmails();
+    Set<String> findEmails();
 
     User findById(long id);
 
