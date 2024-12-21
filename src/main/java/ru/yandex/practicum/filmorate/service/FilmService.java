@@ -49,6 +49,11 @@ public class FilmService {
         return filmStorage.update(oldFilm);
     }
 
+    public void deleteById(long id) {
+        verifyingTheFilmsExistence(id);
+        filmStorage.deleteById(id);
+    }
+
     public void like(long id, long userId) {
         if (filmStorage.findById(id) == null || userStorage.findById(userId) == null) {
             log.error("Пользователь с id={} или фильм с id={} не найден like", userId, id);

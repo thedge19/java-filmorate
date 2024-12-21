@@ -51,6 +51,13 @@ public class FilmController {
         return filmUpdated;
     }
 
+    @DeleteMapping
+    public void deleteById(@RequestParam("id") long id) {
+        log.info("Удаляется фильм с id={}", id);
+        filmService.deleteById(id);
+        log.info("Фильм с id={} удалён", id);
+    }
+
     @PutMapping("/{id}/like/{userId}")
     public void like(
             @PathVariable long id,
@@ -75,4 +82,6 @@ public class FilmController {
         log.info("Список первых {} популярных фильмов", count);
         return filmService.popularFilms(count);
     }
+
+
 }
