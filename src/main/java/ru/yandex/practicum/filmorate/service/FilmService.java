@@ -19,12 +19,11 @@ public class FilmService {
     private final UserStorage userStorage;
 
     public Collection<Film> findAll() {
-        log.info("Id первого фильма = {}", filmStorage.findById(1).getId());
         return filmStorage.findAll();
     }
 
     public Film findById(long id) {
-        return filmStorage.findById(id);
+        return verifyingTheFilmsExistence(id);
     }
 
     public Film create(Film film) {
@@ -32,7 +31,22 @@ public class FilmService {
     }
 
     public Film update(Film newFilm) {
-        return filmStorage.update(newFilm);
+        // проверяем необходимые условия
+        Film oldFilm = verifyingTheFilmsExistence(newFilm.getId());
+        if (newFilm.getName() != null) {
+            oldFilm.setName(newFilm.getName());
+        }
+        if (newFilm.getDescription() != null) {
+            oldFilm.setDescription(newFilm.getDescription());
+        }
+        if (newFilm.getReleaseDate() != null) {
+            oldFilm.setReleaseDate(newFilm.getReleaseDate());
+        }
+        if (newFilm.getDuration() != null) {
+            oldFilm.setDuration(newFilm.getDuration());
+        }
+        // если публикация найдена и все условия соблюдены, обновляем её содержимое
+        return filmStorage.update(oldFilm);
     }
 
     public void like(long id, long userId) {
@@ -53,5 +67,13 @@ public class FilmService {
 
     public Collection<Film> popularFilms(Integer count) {
         return filmStorage.popularFilms(count);
+    }
+
+    private Film verifyingTheFilmsExistence(long id) {
+        Film film = filmStorage.findById(id);
+        if (film == null) {
+            throw new NotFoundException("Пользователь с id= " + id + " не найден");
+        }
+        return film;
     }
 }

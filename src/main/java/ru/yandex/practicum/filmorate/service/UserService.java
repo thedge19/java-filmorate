@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.InternalErrorException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
@@ -23,30 +24,48 @@ public class UserService {
     }
 
     public User findById(long id) {
+        verifyingTheUsersExistence(id);
         return userStorage.findById(id);
     }
 
     public User create(User user) {
+        String email = user.getEmail();
+        // проверяем выполнение необходимых условий
+        if (userStorage.findEmails().contains(email)) {
+            throw new InternalErrorException("Пользователь с email " + email + " уже существует");
+        }
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
         return userStorage.create(user);
     }
 
     public User update(User newUser) {
-        if (findById(newUser.getId()) != null) {
-            return userStorage.update(newUser);
+        User oldUser = verifyingTheUsersExistence(newUser.getId());
+        if (newUser.getEmail() != null) {
+            oldUser.setEmail(newUser.getEmail());
         }
-        log.error("Пользователь с id = {} не найден update", newUser.getId());
-        throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
+        if (newUser.getLogin() != null) {
+            oldUser.setLogin(newUser.getLogin());
+        }
+        if (newUser.getName() != null) {
+            oldUser.setName(newUser.getName());
+        }
+        if (newUser.getBirthday() != null) {
+            oldUser.setBirthday(newUser.getBirthday());
+        }
+        // если публикация найдена и все условия соблюдены, обновляем её содержимое
+        return userStorage.update(oldUser);
     }
 
     public void addFriend(long userId, long friendId) {
-        if (userStorage.findById(userId) == null || userStorage.findById(friendId) == null) {
-            log.error("Пользователь с id={} или {} не найден addFriend", userId, friendId);
-            throw new NotFoundException("Пользователь не найден");
-        }
+        verifyingTheUsersExistence(userId);
+        verifyingTheUsersExistence(friendId);
         userStorage.addFriend(userId, friendId);
     }
 
     public Set<User> getFriends(long userId) {
+        verifyingTheUsersExistence(userId);
         Set<Long> friendIds = userStorage.getFriends(userId);
         Set<User> friends = new HashSet<>();
         for (Long id : friendIds) {
@@ -56,28 +75,43 @@ public class UserService {
     }
 
     public Set<User> getCommonFriends(long userId, long otherId) {
-        if (userStorage.findById(userId) == null || userStorage.findById(otherId) == null) {
-            log.error("Пользователь с id={} или {} не найден getCommonFriends", userId, otherId);
-            throw new NotFoundException("Пользователь не найден");
-        }
-        Set<Long> commonFriendsIds = userStorage.getCommonFriends(userId, otherId);
+
+        User user = verifyingTheUsersExistence(userId);
+        User other = verifyingTheUsersExistence(otherId);
+
+        Set<Long> userFriendsIds = user.getFriendsIds();
+        Set<Long> otherFriendsIds = other.getFriendsIds();
+
+        userFriendsIds.retainAll(otherFriendsIds);
+
         Set<User> commonFriends = new HashSet<>();
-        for (Long id : commonFriendsIds) {
+        for (Long id : userFriendsIds) {
             commonFriends.add(userStorage.findById(id));
         }
         return commonFriends;
     }
 
     public void removeFriend(long userId, long friendId) {
-        if (userStorage.findById(userId) == null || userStorage.findById(friendId) == null) {
-            log.error("Ошибка удаления пользователя с id={} иp друзей пользователя с id={}", friendId, userId);
-            throw new NotFoundException("Пользователь не найден");
+        User user = verifyingTheUsersExistence(userId);
+        User friend = verifyingTheUsersExistence(friendId);
+
+        if(user.getFriendsIds().contains(friend.getId())) {
+            userStorage.removeFriend(userId, friendId);
         }
+
         userStorage.removeFriend(userId, friendId);
     }
 
     public void deleteById(long id) {
+        verifyingTheUsersExistence(id);
         userStorage.deleteById(id);
-        log.info("Пользователь с id {}", id + "удалён");
+    }
+
+    private User verifyingTheUsersExistence(long id) {
+        User user = userStorage.findById(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id= " + id + " не найден");
+        }
+        return user;
     }
 }

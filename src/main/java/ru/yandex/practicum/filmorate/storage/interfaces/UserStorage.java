@@ -9,6 +9,8 @@ public interface UserStorage {
 
     Collection<User> findAll();
 
+    public Set<String> findEmails();
+
     User findById(long id);
 
     User create(User user);
@@ -20,8 +22,6 @@ public interface UserStorage {
     void addFriend(long userId, long friendId);
 
     Set<Long> getFriends(long userId);
-
-    Set<Long> getCommonFriends(long userId, long otherId);
 
     void removeFriend(long userId, long friendId);
 }

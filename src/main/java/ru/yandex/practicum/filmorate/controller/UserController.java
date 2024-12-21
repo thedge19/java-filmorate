@@ -22,12 +22,16 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
+        log.info("Вызывается список всех пользователей");
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     public User findUserById(@PathVariable long id) {
-        return service.findById(id);
+        log.info("Поиск пользолвателя с id={}", id);
+        User findedUser = service.findById(id);
+        log.info("Пользователь с id={} найден", findedUser.getId());
+        return findedUser;
     }
 
     @PostMapping
@@ -35,7 +39,10 @@ public class UserController {
             @RequestBody
             @Validated(Created.class)
             User user) {
-        return service.create(user);
+        log.info("Создаётся пользователь {}", user);
+        User createdUser = service.create(user);
+        log.info("Пользователь {} создан", createdUser);
+        return createdUser;
     }
 
     @PutMapping
@@ -43,31 +50,46 @@ public class UserController {
             @RequestBody
             @Validated(Updated.class)
             User newUser) {
-        return service.update(newUser);
-    }
+        log.info("Обновляется пользователь {}", newUser);
+        User updatedUser = service.update(newUser);
+        log.info("Пользователь с id={} обновлён", updatedUser);
+        return updatedUser;
+}
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id) {
-        service.deleteById(id);
-    }
+@DeleteMapping("/{id}")
+public void delete(@PathVariable long id) {
+    log.info("Удаляется пользователь с id={}", id);
+    service.deleteById(id);
+    log.info("Пользователь с id={} удалён", id);
+}
 
-    @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
-        service.addFriend(id, friendId);
-    }
+@PutMapping("/{id}/friends/{friendId}")
+public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+    log.info("Пользователь с id={} добавляется в друзья к пользователю с id={}", friendId, id);
+    service.addFriend(id, friendId);
+    log.info("Пользователь с id={} добавлен в друзья к пользователю с id={}", friendId, id);
+}
 
-    @GetMapping("/{id}/friends")
-    public Set<User> getFriends(@PathVariable long id) {
-        return service.getFriends(id);
-    }
+@GetMapping("/{id}/friends")
+public Set<User> getFriends(@PathVariable long id) {
+    log.info("Получение списка друзей пользователя с id={}", id);
+    Set<User> friends = service.getFriends(id);
+    log.info("Список друзей пользователя с id={}: {}", id, friends);
+    return friends;
+}
 
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public Set<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
-        return service.getCommonFriends(id, otherId);
-    }
+@GetMapping("/{id}/friends/common/{otherId}")
+public Set<User> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+    log.info("Получение общего списка друзей пользователей с id={} и id={}", id, otherId);
+    Set<User> commonFriends = service.getCommonFriends(id, otherId);
+    log.info("Список общих друзей пользователей с id={} и {}: {}", id, otherId, commonFriends);
+    return commonFriends;
+}
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
+        log.info("Удаление у пользователя с id={} друга с id={}", id, friendId);
         service.removeFriend(id, friendId);
+        log.info("ПОльзователь с id={} удалён из друзей пользователя с id={}", friendId, id);
     }
 }
