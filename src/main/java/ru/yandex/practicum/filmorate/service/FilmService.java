@@ -8,7 +8,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,7 +63,8 @@ public class FilmService {
             log.error("Пользователь с id={} или фильм с id={} не найден like", userId, id);
             throw new NotFoundException("Фильм не найден");
         }
-        filmStorage.like(id, userId);
+        Film likedFilm = findById(id);
+        filmStorage.like(likedFilm, userId);
     }
 
     public void unlike(long id, long userId) {
@@ -67,11 +72,19 @@ public class FilmService {
             log.error("Пользователь с id={} или фильм с id={} не найден unlike", userId, id);
             throw new NotFoundException("Фильм не найден");
         }
-        filmStorage.unlike(id, userId);
+        Film unlikedFilm = findById(id);
+        filmStorage.unlike(unlikedFilm, userId);
     }
 
     public Collection<Film> popularFilms(Integer count) {
-        return filmStorage.popularFilms(count);
+        List<Film> filmList = new ArrayList<>(findAll());
+        filmList.sort(Comparator.comparingInt(f -> - f.getLikedUsersIds().size()));
+
+        if (filmList.size() > count) {
+            filmList = filmList.stream().limit(count).collect(Collectors.toList());
+        }
+
+        return filmList;
     }
 
     private Film verifyingTheFilmsExistence(long id) {

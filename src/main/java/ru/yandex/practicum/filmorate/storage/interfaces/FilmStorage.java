@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.Collection;
 
 public interface FilmStorage {
-
     Collection<Film> findAll();
 
     Film findById(long id);
@@ -16,9 +15,7 @@ public interface FilmStorage {
 
     void deleteById(long id);
 
-    void like(long id, long userId);
+    void like(Film likedFilm, long userId);
 
-    void unlike(long id, long userId);
-
-    Collection<Film> popularFilms(Integer count);
+    void unlike(Film unlikedFilm, long userId);
 }
