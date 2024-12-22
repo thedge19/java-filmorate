@@ -15,7 +15,7 @@ import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -110,8 +110,8 @@ class FilmorateApplicationFilmControllerTests {
         addValidUser();
         filmController.like(2, 1);
 
-        Film popularFilm = filmController.popularFilms(2).stream().findFirst().get();
-        assertEquals(popularFilm.getName(), "film2");
+        String popularFilm = Objects.requireNonNull(filmController.popularFilms(2).stream().findFirst().orElse(null)).getName();
+        assertEquals(popularFilm, "film2");
     }
 
     void addValidFilm() {
