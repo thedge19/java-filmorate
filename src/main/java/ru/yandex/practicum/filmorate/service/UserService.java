@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -53,6 +54,9 @@ public class UserService {
         }
         if (newUser.getBirthday() != null) {
             oldUser.setBirthday(newUser.getBirthday());
+        }
+        if (!Objects.equals(oldUser.getEmail(), newUser.getEmail())) {
+            updateEmailInSet(oldUser.getEmail(), newUser.getEmail());
         }
         // если публикация найдена и все условия соблюдены, обновляем её содержимое
         return userStorage.update(oldUser);
@@ -113,5 +117,10 @@ public class UserService {
             throw new NotFoundException("Пользователь с id= " + id + " не найден");
         }
         return user;
+    }
+
+    private void updateEmailInSet(String oldEmail, String newEmail) {
+        userStorage.getEmails().remove(oldEmail);
+        userStorage.getEmails().add(newEmail);
     }
 }
