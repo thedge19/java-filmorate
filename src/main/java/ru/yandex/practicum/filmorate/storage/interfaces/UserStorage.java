@@ -26,6 +26,4 @@ public interface UserStorage {
     void removeFriend(long userId, long friendId);
 
     Set<String> getEmails();
-
-    String getEmail(String email);
 }

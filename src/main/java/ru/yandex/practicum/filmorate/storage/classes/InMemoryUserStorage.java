@@ -70,11 +70,6 @@ public class InMemoryUserStorage implements UserStorage {
         return emails;
     }
 
-    @Override
-    public String getEmail(String email) {
-        return emails.stream().filter(email::equals).findFirst().orElse(null);
-    }
-
     private long getNextId(Map<Long, ?> elements) {
         long currentMaxId = elements.keySet()
                 .stream()
