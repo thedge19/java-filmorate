@@ -33,5 +33,5 @@ public class Film {
     private Integer duration;
     private Set<Long> likedUsersIds = new HashSet<>();
     private Rating rating;
-    private List<Integer> genreIds = new ArrayList<>();
+    private List<Long> genreIds = new ArrayList<>();
 }
