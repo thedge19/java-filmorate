@@ -5,11 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.yandex.practicum.filmorate.model.enums.Rating;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationConstraints;
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,4 +32,6 @@ public class Film {
     @Positive(groups = {Created.class, Updated.class})
     private Integer duration;
     private Set<Long> likedUsersIds = new HashSet<>();
+    private Rating rating;
+    private List<Integer> genreIds = new ArrayList<>();
 }

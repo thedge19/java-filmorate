@@ -28,4 +28,5 @@ public class User {
     @BirthdayValidationConstraints(groups = {Created.class, Updated.class})
     private String birthday;
     private Set<Long> friendsIds = new HashSet<>();
+    private boolean areFriends;
 }
