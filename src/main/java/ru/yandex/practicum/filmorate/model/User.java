@@ -1,17 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
-import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.BirthdayValidationConstraints;
+import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.LoginValidationConstraints;
+import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * User.
+ */
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class User {
     private Long id;
     @NotNull(groups = Created.class)
@@ -23,4 +27,6 @@ public class User {
     private String name;
     @BirthdayValidationConstraints(groups = {Created.class, Updated.class})
     private String birthday;
+    private Set<Long> friendsIds = new HashSet<>();
+    private boolean areFriends;
 }
