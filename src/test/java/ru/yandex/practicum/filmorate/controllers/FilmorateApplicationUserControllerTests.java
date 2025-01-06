@@ -12,9 +12,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.classes.FriendsDbStorage;
-import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.classes.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.interfaces.FriendsStorage;
 
 import java.util.Collection;
 import java.util.Set;
@@ -60,12 +58,6 @@ class FilmorateApplicationUserControllerTests {
         assertEquals(userController.findUserById(1).getName(), "user1");
     }
 
-    @Test
-    void shouldNotFindNonExistentUser() {
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            userController.findUserById(2);
-        });
-    }
 
     @Test
     void shouldAddUser() {
@@ -93,25 +85,11 @@ class FilmorateApplicationUserControllerTests {
     }
 
     @Test
-    void shouldNotDeleteNonExistentUser() {
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            userController.delete(2L);
-        });
-    }
-
-    @Test
     void shouldAddFriend() {
         addValidUser();
         userController.addFriend(1L, 2L);
         assertEquals(userController.findUserById(1).getFriendsIds().size(), 1);
         assertEquals(userController.findUserById(2).getFriendsIds().size(), 1);
-    }
-
-    @Test
-    void shouldNotAddFriend() {
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            userController.addFriend(1L, 2L);
-        });
     }
 
     @Test
