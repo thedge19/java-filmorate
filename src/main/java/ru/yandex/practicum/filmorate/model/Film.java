@@ -32,6 +32,6 @@ public class Film {
     private Integer duration;
     private Set<Long> likedUsersIds = new HashSet<>();
 
-    private Mpa Mpa;
+    private Mpa mpa;
     private List<Long> genreIds = new ArrayList<>();
 }
