@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import ru.yandex.practicum.filmorate.model.enums.Rating;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationConstraints;
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
@@ -32,6 +31,7 @@ public class Film {
     @Positive(groups = {Created.class, Updated.class})
     private Integer duration;
     private Set<Long> likedUsersIds = new HashSet<>();
-    private Rating rating;
+
+    private Mpa Mpa;
     private List<Long> genreIds = new ArrayList<>();
 }

@@ -19,11 +19,5 @@ public interface UserStorage {
 
     void deleteById(long id);
 
-    void addFriend(long userId, long friendId);
-
-    Set<Long> getFriends(long userId);
-
-    void removeFriend(long userId, long friendId);
-
     Set<String> getEmails();
 }

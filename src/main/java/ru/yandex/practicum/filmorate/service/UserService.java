@@ -3,15 +3,13 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.InternalErrorException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.interfaces.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -19,6 +17,7 @@ import java.util.Set;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     public Collection<User> findAll() {
         return userStorage.findAll();
@@ -42,6 +41,7 @@ public class UserService {
     }
 
     public User update(User newUser) {
+
         User oldUser = verifyingTheUsersExistence(newUser.getId());
         if (newUser.getEmail() != null) {
             oldUser.setEmail(newUser.getEmail());
@@ -63,14 +63,18 @@ public class UserService {
     }
 
     public void addFriend(long userId, long friendId) {
-        verifyingTheUsersExistence(userId);
-        verifyingTheUsersExistence(friendId);
-        userStorage.addFriend(userId, friendId);
+        if ((findAll().stream().noneMatch(user -> user.getId() == userId))
+                || (findAll().stream().noneMatch(user -> user.getId() == friendId))) {
+            log.warn("Ошибка при добавлении пользователей в друзья - пользователь с ID {} или {} не найден", userId, friendId);
+            throw new NotFoundException("Не найден пользователь с ID " + userId + " или" + friendId);
+        }
+
+        friendsStorage.addFriend(userId, friendId);
     }
 
     public Set<User> getFriends(long userId) {
         verifyingTheUsersExistence(userId);
-        Set<Long> friendIds = userStorage.getFriends(userId);
+        Collection<Long> friendIds = friendsStorage.getFriends(userId);
         Set<User> friends = new HashSet<>();
         for (Long id : friendIds) {
             friends.add(userStorage.findById(id));
@@ -96,14 +100,17 @@ public class UserService {
     }
 
     public void removeFriend(long userId, long friendId) {
-        User user = verifyingTheUsersExistence(userId);
-        User friend = verifyingTheUsersExistence(friendId);
+        userId = verifyingTheUsersExistence(userId).getId();
+        friendId = verifyingTheUsersExistence(friendId).getId();
 
-        if (user.getFriendsIds().contains(friend.getId())) {
-            userStorage.removeFriend(userId, friendId);
+        Collection<Long> friendIds = friendsStorage.getFriends(userId);
+
+        if (!friendIds.contains(friendId)) {
+            log.warn("Пользователя с данным id={} нет в друзьях у пользователя с id={}", friendId, userId);
+            throw new InternalErrorException("Пользователя с данным id нет в друзьях");
         }
 
-        userStorage.removeFriend(userId, friendId);
+        friendsStorage.removeFriend(userId, friendId);
     }
 
     public void deleteById(long id) {
@@ -112,11 +119,12 @@ public class UserService {
     }
 
     private User verifyingTheUsersExistence(long id) {
-        User user = userStorage.findById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id= " + id + " не найден");
+
+        if (findAll().stream().noneMatch(user -> user.getId() == id)) {
+            log.warn("Ошибка - пользователь с ID {} не найден", id);
+            throw new NotFoundException("Не найден пользователь с ID " + id);
         }
-        return user;
+        return userStorage.findById(id);
     }
 
     private void updateEmailInSet(String oldEmail, String newEmail) {

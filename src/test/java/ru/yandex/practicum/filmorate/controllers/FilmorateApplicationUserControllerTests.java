@@ -5,11 +5,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.classes.FriendsDbStorage;
 import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.classes.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FriendsStorage;
 
 import java.util.Collection;
 import java.util.Set;
@@ -25,7 +30,13 @@ class FilmorateApplicationUserControllerTests {
 
     @BeforeEach
     void setUp() {
-        userController = new UserController(new UserService(new InMemoryUserStorage()));
+        userController = new UserController(
+                new UserService(
+                        new UserDbStorage(
+                                new JdbcTemplate(), new UserRowMapper()),
+                        new FriendsDbStorage(
+                                new JdbcTemplate())
+                ));
 
         User user1 = new User();
         user1.setLogin("u1");

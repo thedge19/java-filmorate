@@ -4,14 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.classes.FriendsDbStorage;
 import ru.yandex.practicum.filmorate.storage.classes.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.Collection;
@@ -28,11 +31,12 @@ class FilmorateApplicationFilmControllerTests {
     UserController userController;
 
     UserStorage userStorage = new InMemoryUserStorage();
+    FriendsStorage friendsStorage = new FriendsDbStorage(new JdbcTemplate());
 
     @BeforeEach
     void setUp() {
         filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), userStorage));
-        userController = new UserController(new UserService(userStorage));
+        userController = new UserController(new UserService(userStorage, friendsStorage));
 
         Film film1 = new Film();
         film1.setName("film1");

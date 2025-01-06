@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.InternalErrorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
@@ -31,6 +32,10 @@ public class FilmService {
     }
 
     public Film create(Film film) {
+        if (film.getMpa().getId() > 5) {
+            log.warn("Некорректный id мра: {}", film.getMpa().getId());
+            throw new InternalErrorException("Некорректный мра");
+        }
         return filmStorage.create(film);
     }
 
