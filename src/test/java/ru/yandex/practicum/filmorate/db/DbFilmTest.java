@@ -33,7 +33,7 @@ public class DbFilmTest {
                 .hasFieldOrPropertyWithValue("releaseDate", "2006-10-20")
                 .hasFieldOrPropertyWithValue("duration", 125);
     }
-//
+
     @Test
     void shouldCreateFilm() {
         Mpa mpa1 = new Mpa();
