@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.interfaces.MpaStorage;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @Slf4j
 @Component
