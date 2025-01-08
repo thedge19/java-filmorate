@@ -26,7 +26,9 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film findFilmById(@PathVariable long id) {
-        return filmService.findById(id);
+        Film film = filmService.findById(id);
+        log.info("Запрошен фильм {}", film);
+        return film;
     }
 
     @PostMapping
@@ -34,9 +36,9 @@ public class FilmController {
             @RequestBody
             @Validated(Created.class)
             Film film) {
-        log.info("Создаётся фильм: {}", film.getName());
+        log.info("Создаётся фильм: {}", film);
         Film filmCreated = filmService.create(film);
-        log.info("Фильм: {} создан", filmCreated.getName());
+        log.info("Фильм: {} создан", filmCreated);
         return filmCreated;
     }
 
@@ -45,7 +47,7 @@ public class FilmController {
             @RequestBody
             @Validated(Updated.class)
             Film newFilm) {
-        log.info("Обновляется фильм {}", newFilm.getName());
+        log.info("Обновляется фильм {}", newFilm);
         Film filmUpdated = filmService.update(newFilm);
         log.info("Фильм {} обновлён", filmUpdated.getName());
         return filmUpdated;

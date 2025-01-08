@@ -3,16 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.InternalErrorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,8 +32,15 @@ public class FilmService {
     public Film create(Film film) {
         if (film.getMpa().getId() > 5) {
             log.warn("Некорректный id мра: {}", film.getMpa().getId());
-            throw new InternalErrorException("Некорректный мра");
+            throw new ValidationException("Некорректный мра");
         }
+        for (Genre genre : film.getGenres()) {
+            if (genre.getId() > 6) {
+                log.warn("Некорректный id жанра: {}", film.getMpa().getId());
+                throw new ValidationException("Некорректный жанр");
+            }
+        }
+
         return filmStorage.create(film);
     }
 
@@ -64,11 +69,14 @@ public class FilmService {
     }
 
     public void like(long id, long userId) {
-        if (filmStorage.findById(id) == null || userStorage.findById(userId) == null) {
-            log.error("Пользователь с id={} или фильм с id={} не найден like", userId, id);
-            throw new NotFoundException("Фильм не найден");
-        }
-        Film likedFilm = findById(id);
+        log.info("Провалились в сервис");
+//        if (findById(id) == null || userStorage.findById(userId) == null) {
+//            log.error("Пользователь с id={} или фильм с id={} не найден like", userId, id);
+//            throw new NotFoundException("Фильм не найден");
+//        }
+        log.info("Ищется фильм {}", id);
+        Film likedFilm = filmStorage.findById(id);
+        log.info("Фильм {} найден", likedFilm);
         filmStorage.like(likedFilm, userId);
     }
 
@@ -83,7 +91,7 @@ public class FilmService {
 
     public Collection<Film> popularFilms(Integer count) {
         List<Film> filmList = new ArrayList<>(findAll());
-        filmList.sort(Comparator.comparingInt(f -> - f.getLikedUsersIds().size()));
+        filmList.sort(Comparator.comparingInt(f -> -f.getLikedUsersIds().size()));
 
         if (filmList.size() > count) {
             filmList = filmList.stream().limit(count).collect(Collectors.toList());

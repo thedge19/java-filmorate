@@ -84,11 +84,11 @@ public class UserService {
 
     public Set<User> getCommonFriends(long userId, long otherId) {
 
-        User user = verifyingTheUsersExistence(userId);
-        User other = verifyingTheUsersExistence(otherId);
+        verifyingTheUsersExistence(userId);
+        verifyingTheUsersExistence(otherId);
 
-        Set<Long> userFriendsIds = user.getFriendsIds();
-        Set<Long> otherFriendsIds = other.getFriendsIds();
+        Set<Long> userFriendsIds = new HashSet<>(friendsStorage.getFriends(userId));
+        Set<Long> otherFriendsIds = new HashSet<>(friendsStorage.getFriends(otherId));
 
         userFriendsIds.retainAll(otherFriendsIds);
 
@@ -100,15 +100,9 @@ public class UserService {
     }
 
     public void removeFriend(long userId, long friendId) {
+
         userId = verifyingTheUsersExistence(userId).getId();
         friendId = verifyingTheUsersExistence(friendId).getId();
-
-        Collection<Long> friendIds = friendsStorage.getFriends(userId);
-
-        if (!friendIds.contains(friendId)) {
-            log.warn("Пользователя с данным id={} нет в друзьях у пользователя с id={}", friendId, userId);
-            throw new InternalErrorException("Пользователя с данным id нет в друзьях");
-        }
 
         friendsStorage.removeFriend(userId, friendId);
     }

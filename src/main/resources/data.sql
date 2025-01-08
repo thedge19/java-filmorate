@@ -1,5 +1,5 @@
-INSERT INTO GENRES (title)
+INSERT INTO GENRES (name)
 VALUES ('Комедия'), ('Драма'), ('Мультфильм'), ('Триллер'), ('Документальный'), ('Боевик');
 
-INSERT INTO MPA (NAME)
+INSERT INTO MPA (name)
 VALUES ('G'), ('PG'), ('PG-13'), ('R'), ('NC-17');

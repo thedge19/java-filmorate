@@ -4,10 +4,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.Collection;
 
-public interface MpaStorage {
-    Collection<Mpa> findAll();
-
-    Mpa get(long id);
-
-    Mpa findNameById(long id);
+public interface LikesStorage {
+    Collection<Long> getLikedUsersIds(long filmId);
 }

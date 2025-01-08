@@ -9,9 +9,7 @@ import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationConstraints;
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,7 +29,6 @@ public class Film {
     @Positive(groups = {Created.class, Updated.class})
     private Integer duration;
     private Set<Long> likedUsersIds = new HashSet<>();
-
     private Mpa mpa;
-    private List<Long> genreIds = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 }
