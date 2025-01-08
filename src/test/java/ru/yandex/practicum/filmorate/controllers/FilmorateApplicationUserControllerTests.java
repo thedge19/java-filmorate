@@ -80,9 +80,7 @@ class FilmorateApplicationUserControllerTests {
 
     @Test
     void shouldNotRemoveFriend() {
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            userController.removeFriend(1L, 2L);
-        });
+        Assertions.assertThrows(NotFoundException.class, () -> userController.removeFriend(1L, 2L));
     }
 
     void addValidUser() {

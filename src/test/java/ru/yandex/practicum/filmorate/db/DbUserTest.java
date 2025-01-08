@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Sql(scripts = {"/schema.sql", "/testUserData.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class dBUserTest {
+public class DbUserTest {
     private final UserDbStorage userStorage;
 
     @Test

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Sql(scripts = {"/schema.sql", "/testFilmData.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class dBFilmTest {
+public class DbFilmTest {
     private final FilmDbStorage filmStorage;
 
     @Test
