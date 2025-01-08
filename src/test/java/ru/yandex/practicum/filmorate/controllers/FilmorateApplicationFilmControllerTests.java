@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -38,20 +39,24 @@ class FilmorateApplicationFilmControllerTests {
         filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), userStorage));
         userController = new UserController(new UserService(userStorage, friendsStorage));
 
+        Mpa mpa1 = new Mpa();
+        mpa1.setId(1);
+        mpa1.setName("Mpa 1");
+
         Film film1 = new Film();
         film1.setName("film1");
         film1.setDescription("film1");
         film1.setReleaseDate("2020-10-01");
         film1.setDuration(120);
+        film1.setMpa(mpa1);
 
         filmController.create(film1);
     }
 
     @Test
     void shouldGetFilms() {
-        addValidFilm();
         Collection<Film> films = filmController.findAll();
-        assertEquals(films.size(), 2);
+        assertEquals(films.size(), 1);
     }
 
     @Test
@@ -119,11 +124,16 @@ class FilmorateApplicationFilmControllerTests {
     }
 
     void addValidFilm() {
+        Mpa mpa = new Mpa();
+        mpa.setId(2);
+        mpa.setName("Mpa 2");
+
         Film film2 = new Film();
         film2.setName("film2");
         film2.setDescription("film2");
         film2.setReleaseDate("2020-10-01");
         film2.setDuration(120);
+        film2.setMpa(mpa);
 
         filmController.create(film2);
     }

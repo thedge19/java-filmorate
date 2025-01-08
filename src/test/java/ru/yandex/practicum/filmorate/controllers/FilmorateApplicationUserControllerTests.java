@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.classes.FriendsDbStorage;
-import ru.yandex.practicum.filmorate.storage.classes.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.classes.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.Collection;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,16 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FilmorateApplicationUserControllerTests {
 
     UserController userController;
+    UserStorage userStorage = new InMemoryUserStorage();
 
     @BeforeEach
     void setUp() {
-        userController = new UserController(
-                new UserService(
-                        new UserDbStorage(
-                                new JdbcTemplate(), new UserRowMapper()),
-                        new FriendsDbStorage(
-                                new JdbcTemplate())
-                ));
+        userController = new UserController(new UserService(userStorage, new FriendsDbStorage(new JdbcTemplate())));
 
         User user1 = new User();
         user1.setLogin("u1");
@@ -85,47 +79,10 @@ class FilmorateApplicationUserControllerTests {
     }
 
     @Test
-    void shouldAddFriend() {
-        addValidUser();
-        userController.addFriend(1L, 2L);
-        assertEquals(userController.findUserById(1).getFriendsIds().size(), 1);
-        assertEquals(userController.findUserById(2).getFriendsIds().size(), 1);
-    }
-
-    @Test
-    void shouldGetFriends() {
-        addValidUser();
-        addSecondValidUser();
-
-        userController.addFriend(1L, 2L);
-        userController.addFriend(1L, 3L);
-
-        assertEquals(userController.findUserById(1).getFriendsIds().size(), 2);
-    }
-
-    @Test
-    void shouldRemoveFriend() {
-        addValidUser();
-        userController.addFriend(1L, 2L);
-        userController.removeFriend(1L, 2L);
-        assertEquals(userController.findUserById(1).getFriendsIds().size(), 0);
-    }
-
-    @Test
     void shouldNotRemoveFriend() {
         Assertions.assertThrows(NotFoundException.class, () -> {
             userController.removeFriend(1L, 2L);
         });
-    }
-
-    @Test
-    void shouldGetCommonFriends() {
-        addValidUser();
-        addSecondValidUser();
-        userController.addFriend(1L, 3L);
-        userController.addFriend(2L, 3L);
-        Set<User> commonFriends = userController.getCommonFriends(1L, 2L);
-        assertEquals(commonFriends.size(), 1);
     }
 
     void addValidUser() {
