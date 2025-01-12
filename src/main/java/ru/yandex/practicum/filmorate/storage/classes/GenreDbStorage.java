@@ -27,8 +27,14 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public Genre get(long id) {
+    public Genre findById(long id) {
         String q = "SELECT ID, NAME FROM GENRES WHERE ID = ?";
         return jdbcTemplate.queryForObject(q, new GenreRowMapper(), id);
+    }
+
+    @Override
+    public boolean genreExists(long id) {
+        String q = "SELECT CASE WHEN EXISTS (SELECT * FROM GENRES WHERE ID = ?) THEN 'TRUE' ELSE 'FALSE' END";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(q, Boolean.class, id));
     }
 }

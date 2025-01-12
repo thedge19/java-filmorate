@@ -37,4 +37,10 @@ public class MpaDbStorage implements MpaStorage {
         String q = "SELECT ID,NAME FROM MPA WHERE ID = ?";
         return jdbcTemplate.queryForObject(q, new MpaRowMapper(), id);
     }
+
+    @Override
+    public boolean mpaExists(long id) {
+        String q = "SELECT CASE WHEN EXISTS (SELECT * FROM MPA WHERE ID = ?) THEN 'TRUE' ELSE 'FALSE' END";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(q, Boolean.class, id));
+    }
 }

@@ -35,6 +35,8 @@ public class DbUserTest {
 
     @Test
     void shouldCreateUser() {
+        assertThat(userStorage.findAll()).hasSize(2);
+
         User newUser = new User();
         newUser.setEmail("BretHart@wolfpack.com");
         newUser.setLogin("BretHart");
@@ -48,6 +50,7 @@ public class DbUserTest {
 
     @Test
     void delete() {
+        assertThat(userStorage.findAll()).hasSize(2);
         userStorage.deleteById(1);
         assertThat(userStorage.findAll()).hasSize(1);
     }

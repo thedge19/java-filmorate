@@ -10,4 +10,6 @@ public interface MpaStorage {
     Mpa get(long id);
 
     Mpa findNameById(long id);
+
+    boolean mpaExists(long id);
 }

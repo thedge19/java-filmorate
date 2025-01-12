@@ -7,7 +7,7 @@ import java.util.Collection;
 public interface GenreStorage {
     Collection<Genre> findAll();
 
-    Genre get(long id);
-//
-//    Mpa findNameById(long id);
+    Genre findById(long id);
+
+    boolean genreExists(long id);
 }

@@ -36,6 +36,8 @@ public class DbFilmTest {
 
     @Test
     void shouldCreateFilm() {
+        assertThat(filmStorage.findAll()).hasSize(2);
+
         Mpa mpa1 = new Mpa();
         mpa1.setId(1);
         mpa1.setName("Mpa 1");
@@ -54,6 +56,7 @@ public class DbFilmTest {
 
     @Test
     void delete() {
+        assertThat(filmStorage.findAll()).hasSize(2);
         filmStorage.deleteById(1);
         assertThat(filmStorage.findAll()).hasSize(1);
     }

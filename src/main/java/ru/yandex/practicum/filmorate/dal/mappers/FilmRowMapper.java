@@ -38,7 +38,7 @@ public class FilmRowMapper implements RowMapper<Film> {
         List<Long> genresIds = jdbcTemplate.queryForList(genresQuery, Long.class, film.getId());
         Collections.sort(genresIds);
         for (Long genreId : genresIds) {
-            film.getGenres().add(genreStorage.get(genreId));
+            film.getGenres().add(genreStorage.findById(genreId));
         }
 
         return film;

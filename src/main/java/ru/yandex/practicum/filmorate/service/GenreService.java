@@ -20,27 +20,16 @@ public class GenreService {
         return genreStorage.findAll();
     }
 
-    public Genre get(long id) {
+    public Genre findById(long id) {
         log.info("Запрашивается наименование жанра с id={}", id);
-        if (id > 6) {
+        if (!genreStorage.genreExists(id)) {
             log.warn("Некорректный id жанра: {}", id);
             throw new NotFoundException("Некорректный жанр");
         }
-        return genreStorage.get(id);
+        return genreStorage.findById(id);
     }
 
-//
-//    public void deleteById(long id) {
-//        filmStorage.deleteById(id);
-//    }
-
-
-
-//    private Film verifyingTheFilmsExistence(long id) {
-//        Film film = filmStorage.findById(id);
-//        if (film == null) {
-//            throw new NotFoundException("Пользователь с id= " + id + " не найден");
-//        }
-//        return film;
-//    }
+    public boolean genreExist(long id) {
+        return genreStorage.genreExists(id);
+    }
 }

@@ -22,10 +22,14 @@ public class MpaService {
 
     public Mpa findNameById(long id) {
         log.info("Запрашивается наименование МРА с id={}", id);
-        if (id > 5) {
+        if (!mpaStorage.mpaExists(id)) {
             log.warn("Некорректный id мра: {}", id);
             throw new NotFoundException("Некорректный мра");
         }
         return mpaStorage.findNameById(id);
+    }
+
+    public boolean mpaExists(long id) {
+        return mpaStorage.mpaExists(id);
     }
 }
