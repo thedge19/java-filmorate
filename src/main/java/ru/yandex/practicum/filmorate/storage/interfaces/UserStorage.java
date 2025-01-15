@@ -21,5 +21,5 @@ public interface UserStorage {
 
     Set<String> getEmails();
 
-    boolean userExists(long id);
+    boolean userNotExists(long id);
 }

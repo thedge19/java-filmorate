@@ -86,8 +86,8 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public boolean userExists(long id) {
+    public boolean userNotExists(long id) {
         String q = "SELECT CASE WHEN EXISTS (SELECT * FROM USERS WHERE ID = ?) THEN 'TRUE' ELSE 'FALSE' END";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(q, Boolean.class, id));
+        return !Boolean.TRUE.equals(jdbcTemplate.queryForObject(q, Boolean.class, id));
     }
 }

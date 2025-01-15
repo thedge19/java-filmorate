@@ -56,8 +56,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public boolean userExists(long id) {
-        return findById(id) != null;
+    public boolean userNotExists(long id) {
+        return findById(id) == null;
     }
 
     private long getNextId(Map<Long, ?> elements) {

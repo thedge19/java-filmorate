@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public void addFriend(long userId, long friendId) {
-        if (!userStorage.userExists(userId) || (!userStorage.userExists(friendId))) {
+        if (userStorage.userNotExists(userId) || (userStorage.userNotExists(friendId))) {
             log.warn("Ошибка при добавлении пользователей в друзья - пользователь с ID {} или {} не найден", userId, friendId);
             throw new NotFoundException("Не найден пользователь с ID " + userId + " или" + friendId);
         }
@@ -116,7 +116,7 @@ public class UserService {
 
     private User verifyingTheUsersExistence(long id) {
 
-        if (!userStorage.userExists(id)) {
+        if (userStorage.userNotExists(id)) {
             log.warn("Ошибка - пользователь с ID {} не найден", id);
             throw new NotFoundException("Не найден пользователь с ID " + id);
         }
