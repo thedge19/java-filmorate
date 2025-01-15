@@ -22,19 +22,19 @@ public class GenreService {
     }
 
     public Genre findById(long id) {
-        if (!genreExist(id)) {
+        if (genreNotExist(id)) {
             log.warn("Некорректный жанр c id={}", id);
             throw new NotFoundException("Некорректный жанр");
         }
         return genreStorage.findById(id);
     }
 
-    public boolean genreExist(long id) {
-        return genreStorage.genreExists(id);
+    public boolean genreNotExist(long id) {
+        return !genreStorage.genreExists(id);
     }
 
     public void checkGenre(long genreId) {
-        if (!genreExist(genreId)) {
+        if (genreNotExist(genreId)) {
             log.warn("Некорректный id жанра: {}", genreId);
             throw new ValidationException("Некорректный жанр");
         }
