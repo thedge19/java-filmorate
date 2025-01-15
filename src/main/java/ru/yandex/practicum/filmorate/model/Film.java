@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationCons
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -28,7 +30,21 @@ public class Film {
     private String releaseDate;
     @Positive(groups = {Created.class, Updated.class})
     private Integer duration;
+
     private Set<Long> likedUsersIds = new HashSet<>();
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Film film = (Film) o;
+        return Objects.equals(id, film.id) && Objects.equals(name, film.name) && Objects.equals(duration, film.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, duration);
+    }
 }

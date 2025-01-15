@@ -8,11 +8,10 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final FilmRowMapper mapper;
+    private final GenreService genreService;
 
     @Override
     public Collection<Film> findAll() {
@@ -64,6 +64,7 @@ public class FilmDbStorage implements FilmStorage {
                 newFilm.getDuration(),
                 newFilm.getMpa().getId(),
                 newFilm.getId());
+        newFilm.getGenres().addAll(genreService.getFilmGenres(newFilm.getId()));
 
         updateGenresIntermediaryTable(newFilm);
 
@@ -88,15 +89,40 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(q, userId, unlikedFilm.getId());
     }
 
+    @Override
+    public Collection<Film> popularFilms(Integer count) {
+
+        String q = "SELECT ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID FROM FILMS AS F " +
+                "LEFT OUTER JOIN LIKES AS L ON F.ID = L.FILM_ID " +
+                "GROUP BY F.ID " +
+                "ORDER BY COUNT(L.FILM_ID) " +
+                "DESC " +
+                "LIMIT 10";
+
+        return jdbcTemplate.query(q, mapper);
+    }
+
     private void updateGenresIntermediaryTable(Film film) {
         String deleteGenresQuery = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(deleteGenresQuery, film.getId());
 
-        if (film.getGenres() != null) {
-            String insertGenresQuery = "INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES (?, ?)";
-            for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update(insertGenresQuery, film.getId(), genre.getId());
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            StringBuilder insertGenresQuery = new StringBuilder("INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES ");
+            List<Object> parameters = new ArrayList<>();
+
+            List<Genre> genres = new ArrayList<>(film.getGenres());
+
+            for (int i = 0; i < film.getGenres().size(); i++) {
+                insertGenresQuery.append("(?, ?)");
+                if (i < film.getGenres().size() - 1) {
+                    insertGenresQuery.append(", ");
+                }
+                parameters.add(film.getId());
+                parameters.add(genres.get(i).getId());
             }
+
+            jdbcTemplate.update(insertGenresQuery.toString(), parameters.toArray());
         }
     }
+
 }

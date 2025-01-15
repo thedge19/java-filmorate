@@ -55,6 +55,11 @@ public class InMemoryUserStorage implements UserStorage {
         return emails;
     }
 
+    @Override
+    public boolean userExists(long id) {
+        return findById(id) != null;
+    }
+
     private long getNextId(Map<Long, ?> elements) {
         long currentMaxId = elements.keySet()
                 .stream()

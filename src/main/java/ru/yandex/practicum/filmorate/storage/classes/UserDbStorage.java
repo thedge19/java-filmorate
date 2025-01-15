@@ -84,4 +84,10 @@ public class UserDbStorage implements UserStorage {
     public Set<String> getEmails() {
         return Set.of();
     }
+
+    @Override
+    public boolean userExists(long id) {
+        String q = "SELECT CASE WHEN EXISTS (SELECT * FROM USERS WHERE ID = ?) THEN 'TRUE' ELSE 'FALSE' END";
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(q, Boolean.class, id));
+    }
 }

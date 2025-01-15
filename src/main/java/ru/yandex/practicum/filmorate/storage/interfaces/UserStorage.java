@@ -20,4 +20,6 @@ public interface UserStorage {
     void deleteById(long id);
 
     Set<String> getEmails();
+
+    boolean userExists(long id);
 }

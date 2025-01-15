@@ -29,4 +29,23 @@ public class User {
     private String birthday;
     private Set<Long> friendsIds = new HashSet<>();
     private boolean areFriends;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+
+        return getId().equals(user.getId()) &&
+                getEmail().equals(user.getEmail()) &&
+                getLogin().equals(user.getLogin());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getEmail().hashCode();
+        result = 31 * result + getLogin().hashCode();
+        return result;
+    }
 }
+

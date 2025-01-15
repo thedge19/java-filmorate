@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.interfaces.GenreStorage;
 
-import java.util.Collection;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -21,9 +22,8 @@ public class GenreService {
     }
 
     public Genre findById(long id) {
-        log.info("Запрашивается наименование жанра с id={}", id);
-        if (!genreStorage.genreExists(id)) {
-            log.warn("Некорректный id жанра: {}", id);
+        if (!genreExist(id)) {
+            log.warn("Некорректный жанр c id={}", id);
             throw new NotFoundException("Некорректный жанр");
         }
         return genreStorage.findById(id);
@@ -31,5 +31,26 @@ public class GenreService {
 
     public boolean genreExist(long id) {
         return genreStorage.genreExists(id);
+    }
+
+    public void checkGenre(long genreId) {
+        if (!genreExist(genreId)) {
+            log.warn("Некорректный id жанра: {}", genreId);
+            throw new ValidationException("Некорректный жанр");
+        }
+    }
+
+    public List<Genre> getFilmGenres(long id) {
+        List<Long> genreIds = genreStorage.genreIds(id);
+        List<Genre> genres = new ArrayList<>();
+
+        if (!genreIds.isEmpty()) {
+            genres = genreStorage.getFilmGenres(genreIds);
+        }
+        genres.sort(Comparator.comparing(Genre::getId));
+
+        log.info("Лист жанров {}", genres);
+
+        return genres;
     }
 }

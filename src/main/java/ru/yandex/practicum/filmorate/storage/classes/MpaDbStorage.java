@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.classes;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.storage.interfaces.MpaStorage;
 
 import java.util.Collection;
 
-@Slf4j
 @Component
 @Primary
 @RequiredArgsConstructor
@@ -29,13 +27,13 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Mpa get(long id) {
         String q = "SELECT ID,NAME FROM MPA WHERE ID = ?";
-        return jdbcTemplate.queryForObject(q, new MpaRowMapper(), id);
+        return jdbcTemplate.queryForObject(q, mapper, id);
     }
 
     @Override
     public Mpa findNameById(long id) {
         String q = "SELECT ID,NAME FROM MPA WHERE ID = ?";
-        return jdbcTemplate.queryForObject(q, new MpaRowMapper(), id);
+        return jdbcTemplate.queryForObject(q, mapper, id);
     }
 
     @Override

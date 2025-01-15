@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public User update(User newUser) {
-
+        log.info("Обновляется пользователь {}", newUser);
         User oldUser = verifyingTheUsersExistence(newUser.getId());
         if (newUser.getEmail() != null) {
             oldUser.setEmail(newUser.getEmail());
@@ -58,13 +58,13 @@ public class UserService {
         if (!Objects.equals(oldUser.getEmail(), newUser.getEmail())) {
             updateEmailInSet(oldUser.getEmail(), newUser.getEmail());
         }
-        // если публикация найдена и все условия соблюдены, обновляем её содержимое
-        return userStorage.update(oldUser);
+        User updatedUser = userStorage.update(oldUser);
+        log.info("Обновлён пользователь {}", updatedUser);
+        return updatedUser;
     }
 
     public void addFriend(long userId, long friendId) {
-        if ((findAll().stream().noneMatch(user -> user.getId() == userId))
-                || (findAll().stream().noneMatch(user -> user.getId() == friendId))) {
+        if (!userStorage.userExists(userId) || (!userStorage.userExists(friendId))) {
             log.warn("Ошибка при добавлении пользователей в друзья - пользователь с ID {} или {} не найден", userId, friendId);
             throw new NotFoundException("Не найден пользователь с ID " + userId + " или" + friendId);
         }
@@ -79,6 +79,7 @@ public class UserService {
         for (Long id : friendIds) {
             friends.add(userStorage.findById(id));
         }
+        log.info("Возвращается список друзей");
         return friends;
     }
 
@@ -96,6 +97,7 @@ public class UserService {
         for (Long id : userFriendsIds) {
             commonFriends.add(userStorage.findById(id));
         }
+        log.info("Возвращается список общих друзей пользователя с id={}, и пользователя с id={}", userId, otherId);
         return commonFriends;
     }
 
@@ -114,7 +116,7 @@ public class UserService {
 
     private User verifyingTheUsersExistence(long id) {
 
-        if (findAll().stream().noneMatch(user -> user.getId() == id)) {
+        if (!userStorage.userExists(id)) {
             log.warn("Ошибка - пользователь с ID {} не найден", id);
             throw new NotFoundException("Не найден пользователь с ID " + id);
         }
