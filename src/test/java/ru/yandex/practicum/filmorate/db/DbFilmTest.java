@@ -68,7 +68,7 @@ public class DbFilmTest {
         filmStorage.like(film2, user2.getId());
 
         List<Film> films = new ArrayList<>(filmStorage.popularFilms(3));
-        assert(Objects.equals(films.getFirst().getName(), "Terminator: Dark Fate"));
+        assert (Objects.equals(films.getFirst().getName(), "Terminator: Dark Fate"));
     }
 
     void createFilm() {
