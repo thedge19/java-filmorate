@@ -18,4 +18,6 @@ public interface FilmStorage {
     void like(Film likedFilm, long userId);
 
     void unlike(Film unlikedFilm, long userId);
+
+    Collection<Film> popularFilms(Integer count);
 }

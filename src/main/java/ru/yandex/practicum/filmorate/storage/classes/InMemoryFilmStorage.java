@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -48,6 +49,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void unlike(Film unlikedFilm, long userId) {
         unlikedFilm.getLikedUsersIds().remove(userId);
+    }
+
+    @Override
+    public Collection<Film> popularFilms(Integer count) {
+        return List.of();
     }
 
     private long getNextId(Map<Long, ?> elements) {

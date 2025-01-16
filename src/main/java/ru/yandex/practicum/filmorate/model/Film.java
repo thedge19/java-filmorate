@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import ru.yandex.practicum.filmorate.model.enums.Rating;
 import ru.yandex.practicum.filmorate.validator.interfaces.Created;
 import ru.yandex.practicum.filmorate.validator.interfaces.FilmDateValidationConstraints;
 import ru.yandex.practicum.filmorate.validator.interfaces.Updated;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -31,7 +30,21 @@ public class Film {
     private String releaseDate;
     @Positive(groups = {Created.class, Updated.class})
     private Integer duration;
+
     private Set<Long> likedUsersIds = new HashSet<>();
-    private Rating rating;
-    private List<Long> genreIds = new ArrayList<>();
+    private Mpa mpa;
+    private Set<Genre> genres = new LinkedHashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Film film = (Film) o;
+        return Objects.equals(id, film.id) && Objects.equals(name, film.name) && Objects.equals(duration, film.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, duration);
+    }
 }

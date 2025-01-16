@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,7 +12,6 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
-@Slf4j
 @RequiredArgsConstructor
 public class FilmController {
 
@@ -34,10 +32,7 @@ public class FilmController {
             @RequestBody
             @Validated(Created.class)
             Film film) {
-        log.info("Создаётся фильм: {}", film.getName());
-        Film filmCreated = filmService.create(film);
-        log.info("Фильм: {} создан", filmCreated.getName());
-        return filmCreated;
+        return filmService.create(film);
     }
 
     @PutMapping
@@ -45,43 +40,31 @@ public class FilmController {
             @RequestBody
             @Validated(Updated.class)
             Film newFilm) {
-        log.info("Обновляется фильм {}", newFilm.getName());
-        Film filmUpdated = filmService.update(newFilm);
-        log.info("Фильм {} обновлён", filmUpdated.getName());
-        return filmUpdated;
+        return filmService.update(newFilm);
     }
 
     @DeleteMapping
     public void deleteById(@RequestParam("id") long id) {
-        log.info("Удаляется фильм с id={}", id);
         filmService.deleteById(id);
-        log.info("Фильм с id={} удалён", id);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void like(
             @PathVariable long id,
             @PathVariable long userId) {
-        log.info("Пользователь {} лайкает фильм {}", userId, id);
         filmService.like(id, userId);
-        log.info("Пользователь {} лайкнул фильм {}", userId, id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void unlike(
             @PathVariable long id,
             @PathVariable long userId) {
-        log.info("Пользователь {} дизлайкает фильм {}", userId, id);
         filmService.unlike(id, userId);
-        log.info("Пользователь {} дизлайкнул фильм {}", userId, id);
     }
 
     @GetMapping("/popular")
     public Collection<Film> popularFilms(
             @RequestParam(defaultValue = "10") Integer count) {
-        log.info("Запрашивается список первых {} популярных фильмов ", count);
-        Collection<Film> popularFilms = filmService.popularFilms(count);
-        log.info("Список популярных фильмов: {}", popularFilms);
-        return popularFilms;
+        return filmService.popularFilms(count);
     }
 }

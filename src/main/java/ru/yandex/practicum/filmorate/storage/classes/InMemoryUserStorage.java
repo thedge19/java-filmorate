@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.classes;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
@@ -7,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
@@ -49,25 +51,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(long userId, long friendId) {
-        users.get(userId).getFriendsIds().add(friendId);
-        users.get(friendId).getFriendsIds().add(userId);
-    }
-
-    @Override
-    public Set<Long> getFriends(long userId) {
-        return users.get(userId).getFriendsIds();
-    }
-
-    @Override
-    public void removeFriend(long userId, long friendId) {
-            users.get(userId).getFriendsIds().remove(friendId);
-            users.get(friendId).getFriendsIds().remove(userId);
-    }
-
-    @Override
     public Set<String> getEmails() {
         return emails;
+    }
+
+    @Override
+    public boolean userNotExists(long id) {
+        return findById(id) == null;
     }
 
     private long getNextId(Map<Long, ?> elements) {
