@@ -97,7 +97,7 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY F.ID " +
                 "ORDER BY COUNT(L.FILM_ID) " +
                 "DESC " +
-                "LIMIT 10";
+                "LIMIT " + count;
 
         return jdbcTemplate.query(q, mapper);
     }

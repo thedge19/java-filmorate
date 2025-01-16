@@ -98,6 +98,9 @@ public class FilmService {
 
     public Collection<Film> popularFilms(Integer count) {
         log.info("Выводится список популярных фильмов");
+        if (count == null) {
+            count = 10;
+        }
         return filmStorage.popularFilms(count);
     }
 

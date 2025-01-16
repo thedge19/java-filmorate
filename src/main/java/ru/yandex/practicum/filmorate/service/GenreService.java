@@ -47,7 +47,6 @@ public class GenreService {
         if (!genreIds.isEmpty()) {
             genres = genreStorage.getFilmGenres(genreIds);
         }
-        genres.sort(Comparator.comparing(Genre::getId));
 
         log.info("Лист жанров {}", genres);
 

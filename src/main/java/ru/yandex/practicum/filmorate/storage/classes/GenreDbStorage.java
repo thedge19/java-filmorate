@@ -55,7 +55,7 @@ public class GenreDbStorage implements GenreStorage {
             if (i < genreIds.size() - 1) {
                 genresQuery.append(", ");
             } else {
-                genresQuery.append(")");
+                genresQuery.append(") GROUP BY ID ORDER BY ID");
             }
         }
 
