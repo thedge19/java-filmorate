@@ -80,6 +80,7 @@ public class UserService {
             friends.add(userStorage.findById(id));
         }
         log.info("Возвращается список друзей");
+
         return friends;
     }
 
@@ -88,17 +89,10 @@ public class UserService {
         verifyingTheUsersExistence(userId);
         verifyingTheUsersExistence(otherId);
 
-        Set<Long> userFriendsIds = new HashSet<>(friendsStorage.getFriends(userId));
-        Set<Long> otherFriendsIds = new HashSet<>(friendsStorage.getFriends(otherId));
-
-        userFriendsIds.retainAll(otherFriendsIds);
-
-        Set<User> commonFriends = new HashSet<>();
-        for (Long id : userFriendsIds) {
-            commonFriends.add(userStorage.findById(id));
-        }
         log.info("Возвращается список общих друзей пользователя с id={}, и пользователя с id={}", userId, otherId);
-        return commonFriends;
+        Set<User> friends = friendsStorage.getCommonFriends(userId, otherId);
+        log.info(friends.stream().toList().toString());
+        return friends;
     }
 
     public void removeFriend(long userId, long friendId) {
